@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import logo from "./logo.svg";
 import "./App.css";
-import todoList from "./todos.json";
+import todolist from "./todos.json";
 
-class TodoItem extends Component {
+class ToDoItem extends Component {
   render() {
     return (
       <li className={this.props.completed ? "completed" : ""}>
@@ -21,14 +22,14 @@ class TodoItem extends Component {
   }
 }
 
-class TodoList extends Component {
+class ToDoList extends Component {
   render() {
     return <ul className="todo-list">{this.props.children}</ul>;
   }
 }
 
 class App extends Component {
-  state = { todos: todoList };
+  state = { todos: todolist };
 
   handleDeleteCompletedTodos = event => {
     const newTodos = this.state.todos.filter(todo => {
@@ -48,7 +49,6 @@ class App extends Component {
         return false;
       }
       return true;
-      //look for matched id todoIdThatWasClicked = todo.id
     });
     this.setState({
       todos: newTodos
@@ -68,6 +68,23 @@ class App extends Component {
     });
   };
 
+  addNewTodo = event => {
+    const newTodos = this.state.todos.slice(0);
+    if (event.keyCode === 13) {
+      const newTodo = {
+        userId: 1,
+        id: Math.floor(Math.random() * 1000) + 1,
+        title: event.target.value,
+        completed: false
+      };
+      newTodos.push(newTodo);
+      this.setState({
+        todos: newTodos
+      });
+      event.target.value = "";
+    }
+  };
+
   render() {
     return (
       <section className="todoapp">
@@ -77,20 +94,20 @@ class App extends Component {
             className="new-todo"
             placeholder="What needs to be done?"
             autoFocus
-            // addNewTodo={this.addNewTodo()}
+            onKeyDown={this.addNewTodo}
           />
         </header>
         <section className="main">
-          <TodoList>
+          <ToDoList>
             {this.state.todos.map(todo => (
-              <TodoItem
+              <ToDoItem
                 title={todo.title}
                 completed={todo.completed}
                 completeTodo={this.handleCompletedTodo(todo.id)}
                 handleDeleteTodo={this.handleDeleteTodo(todo.id)}
               />
             ))}
-          </TodoList>
+          </ToDoList>
         </section>
         <footer className="footer">
           <span className="todo-count">
@@ -99,9 +116,7 @@ class App extends Component {
           <button
             className="clear-completed"
             onClick={this.handleDeleteCompletedTodos}
-          >
-            Clear completed
-          </button>
+          />
         </footer>
       </section>
     );
